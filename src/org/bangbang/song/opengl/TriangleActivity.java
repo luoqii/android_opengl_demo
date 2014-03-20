@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 import org.bangbang.song.android.commonlib.GLUtil;
@@ -14,6 +15,7 @@ import org.bangbang.song.android.commonlib.LogRender;
 
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLSurfaceView.GLWrapper;
 import android.os.Bundle;
 
 public class TriangleActivity extends Activity {
@@ -29,6 +31,14 @@ public class TriangleActivity extends Activity {
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         setContentView(mGLSurfaceView);
         
+//        mGLSurfaceView.setGLWrapper(new GLWrapper() {
+//            
+//            @Override
+//            public GL wrap(GL gl) {
+//                // TODO Auto-generated method stub
+//                return null;
+//            }
+//        });
         mGLSurfaceView.requestRender();
         
         mGLSurfaceView.post(new Requester(mGLSurfaceView));
@@ -91,7 +101,12 @@ public class TriangleActivity extends Activity {
         };
 
         // Set scolor with red, green, blue and alpha (opacity) values
-        static float scolor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+        static final int COLORS_PER_VERTEX = 4;
+        static float scolor[] = { 
+            0.2f, 0.2f, 0.2f, 1.0f, 
+            0.2f, 0.2f, 0.2f, 1.0f, 
+            0.2f, 0.2f, 0.2f, 1.0f, 
+            };
         
         public Triangle() {
             // initialize vertex byte buffer for shape coordinates
@@ -133,10 +148,15 @@ public class TriangleActivity extends Activity {
             logError(gl, "glEnableClientState(GL10.GL_VERTEX_ARRAY)");
             gl.glVertexPointer(COORDS_PER_VERTEX, GL10.GL_FLOAT, 0, mVertexBuffer);
             logError(gl, "glVertexPointer()");
-//            gl.glEnable(GL10.GL_COLOR_ARRAY);
-//            gl.glColorPointer(1, GL10.GL_UNSIGNED_BYTE, 0, mColorBuffer);
+            
+            gl.glEnable(GL10.GL_FLAT);
+            logError(gl, "glEnable(GL10.GL_FLAT)");
+//            gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
+//            logError(gl, "glEnableClientState(GL10.GL_COLOR_ARRAY)");
+//            gl.glColorPointer(COLORS_PER_VERTEX, GL10.GL_FLAT, 0, mColorBuffer);
 //            logError(gl, "glColorPointer()");
-//            gl.glColor4f(0f, 1f, 0f, 1);
+            gl.glColor4f(0f, 1f, 1f, 1);
+            
             gl.glDrawElements(GL10.GL_TRIANGLES, 3, GL10.GL_UNSIGNED_SHORT, mIndexrBuffer);
             logError(gl, "glDrawElements()");
             //            gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);
